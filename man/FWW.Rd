@@ -4,16 +4,16 @@
 \alias{FWW}
 \title{FWW correction method}
 \usage{
-FWW(daf, divergence, listCutoffs = c(0, 0.05, 0.1), plot = FALSE)
+FWW(daf, divergence, cutoff = 0.05, plot = FALSE)
 }
 \arguments{
 \item{daf}{data frame containing DAF, Pi and P0 values}
 
 \item{divergence}{data frame containing divergent and analyzed sites for selected (i) and neutral (0) classes}
 
-\item{listCutoffs}{list of cutoffs to use (optional). Default cutoffs are: 0, 0.05, 0.1}
-
 \item{plot}{report plot (optional). Default is FALSE}
+
+\item{listCutoffs}{list of cutoffs to use (optional). Default cutoffs are: 0, 0.05, 0.1}
 }
 \value{
 MKT corrected by the FWW method. List with alpha results, graph (optional), divergence metrics, MKT tables and negative selection fractions

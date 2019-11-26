@@ -5,28 +5,28 @@
 \title{iMKT using PopHuman data}
 \usage{
 PopHumanAnalysis(genes = c("gene1", "gene2", "..."), pops = c("pop1",
-  "pop2", "..."), cutoffs = c(0, 0.05, 0.1), recomb = TRUE/FALSE,
-  bins = 0, test = c("standardMKT", "DGRP", "FWW", "asymptoticMKT",
-  "iMKT"), xlow = 0, xhigh = 1, plot = FALSE)
+  "pop2", "..."), cutoff = 0.05, recomb = TRUE/FALSE, bins = 0,
+  test = c("standardMKT", "eMKT", "FWW", "aMKT"), xlow = 0,
+  xhigh = 1, plot = FALSE)
 }
 \arguments{
 \item{genes}{list of genes to analyze}
 
 \item{pops}{list of populations to analyze}
 
-\item{cutoffs}{list of cutofs to perform FWW and/or DGRP}
-
 \item{recomb}{group genes according to recombination values (TRUE/FALSE)}
 
 \item{bins}{number of recombination bins to compute (mandatory if recomb=TRUE)}
 
-\item{test}{which test to perform. Options include: standardMKT (default), DGRP, FWW, asymptoticMKT, iMKT}
+\item{test}{which test to perform. Options include: standardMKT (default), eMKT, FWW, aMKT}
 
 \item{xlow}{lower limit for asymptotic alpha fit (default=0)}
 
 \item{xhigh}{higher limit for asymptotic alpha fit (default=1)}
 
 \item{plot}{report plot (optional). Default is FALSE}
+
+\item{cutoffs}{list of cutofs to perform FWW and/or eMKT}
 }
 \value{
 List of lists with the default test output for each selected population (and recombination bin when defined)
@@ -35,17 +35,17 @@ List of lists with the default test output for each selected population (and rec
 Perform any MKT method using a subset of PopHuman data defined by custom genes and populations lists
 }
 \details{
-Execute any MKT method (standardMKT, FWW, DGRP, asymptoticMKT, iMKT) using a subset of PopHuman data defined by custom genes and populations lists. It uses the dataframe PopHumanData, which can be already loaded in the workspace (using loadPopHuman()) or is directly loaded when executing this function. It also allows deciding whether to analyze genes groupped by recombination bins or not, using recombination rate values corresponding to the sex average estimates from Bhérer et al. 2017 Nature Commun.
+Execute any MKT method (standardMKT, FWW, eMKT, aMKT) using a subset of PopHuman data defined by custom genes and populations lists. It uses the dataframe PopHumanData, which can be already loaded in the workspace (using loadPopHuman()) or is directly loaded when executing this function. It also allows deciding whether to analyze genes groupped by recombination bins or not, using recombination rate values corresponding to the sex average estimates from Bhérer et al. 2017 Nature Commun.
 }
 \examples{
 ## List of genes
 mygenes <- c("ENSG00000011021.21_3","ENSG00000091483.6_3","ENSG00000116191.17_3",
-             "ENSG00000116337.15_4","ENSG00000116584.17_3","ENSG00000116745.6_3",
-             "ENSG00000116852.14_3","ENSG00000116898.11_3","ENSG00000117010.15_3",
-             "ENSG00000117090.14_3","ENSG00000117222.13_3","ENSG00000117394.20_3")
+						"ENSG00000116337.15_4","ENSG00000116584.17_3","ENSG00000116745.6_3",
+						"ENSG00000116852.14_3","ENSG00000116898.11_3","ENSG00000117010.15_3",
+						"ENSG00000117090.14_3","ENSG00000117222.13_3","ENSG00000117394.20_3")
 ## Perform analyses
 PopHumanAnalysis(genes=mygenes , pops=c("CEU","YRI"), recomb=FALSE, test="standardMKT")
-PopHumanAnalysis(genes=mygenes , pops=c("CEU"), recomb=TRUE, bins=3, test="DGRP")
+PopHumanAnalysis(genes=mygenes , pops=c("CEU"), recomb=TRUE, bins=3, test="eMKT")
 
 }
 \keyword{PopData}

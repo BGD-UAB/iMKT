@@ -21,39 +21,42 @@
 #' @keywords MKT
 #' @export
 
-completeMKT <- function(daf, divergence, xlow, xhigh, seed) {
-  
-  ## Check data
-  check <- checkInput(daf, divergence, xlow, xhigh)
-  if(check$data == FALSE) {
-     stop(check$print_errors) }
-  
-  ## Check seed
-  if(missing(seed)) {
-    seed <- NULL
-  } else {
-    set.seed(seed)
-  }
+completeMKT = function(daf, divergence, xlow, xhigh, seed) {
+	
+	## Check data
+	check = checkInput(daf, divergence, xlow, xhigh)
+	if(check$data == FALSE){
+		 stop(check$print_errors) 
+	}
+	
+	## Check seed
+	if(missing(seed)) 
+	{
+		seed = NULL
+	} else 
+	{
+		set.seed(seed)
+	}
 
-  ## Create output list
-  fullResults <- list()
-  
-  ## Standard MKT
-  fullResults[["StandardMKT"]] <- standardMKT(daf,divergence)
-  
-  ## FWW MKT
-  fullResults[["FWW"]] <- FWW(daf,divergence)
-  
-  ## DGRP MKT
-  fullResults[["DGRP"]] <- DGRP(daf,divergence)
-  
-  ## Asymptotic MKT
-  fullResults[["Asymptotic"]] <- asymptoticMKT(daf,divergence,xlow,xhigh)
-  
-  ## iMKT
-  fullResults[["iMKT"]] <- iMKT(daf,divergence,xlow,xhigh)
-  
-  ## Output
-  return(fullResults)
+	## Create output list
+	fullResults = list()
+	
+	## Standard MKT
+	fullResults[['StandardMKT']] = standardMKT(daf,divergence)
+	
+	## FWW MKT
+	fullResults[['FWW']] = FWW(daf,divergence)
+	
+	## DGRP MKT
+	fullResults[['DGRP']] = DGRP(daf,divergence)
+	
+	## Asymptotic MKT
+	fullResults[['Asymptotic']] = asymptoticMKT(daf,divergence,xlow,xhigh)
+	
+	## iMKT
+	fullResults[['iMKT']] = iMKT(daf,divergence,xlow,xhigh)
+	
+	## Output
+	return(fullResults)
 }
 

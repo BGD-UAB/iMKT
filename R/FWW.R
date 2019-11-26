@@ -26,94 +26,92 @@
 #' @keywords MKT
 #' @export
 
-FWW <- function(daf, divergence, listCutoffs=c(0,0.05,0.1), plot=FALSE) {
-  
-  ## Check data
-  check <- checkInput(daf, divergence, 0, 1)
-  if(check$data == FALSE) {
-     stop(check$print_errors) }
+FWW = function(daf, divergence, listCutoffs, plot=FALSE) {
+	
+	## Check data
+	check = checkInput(daf, divergence, 0, 1)
+	if(check$data == FALSE) {
+		 stop(check$print_errors) }
 
-  ## Declare outputs
-  output <- list()
-  mkt_tables <-  list()
-  div_metrics <- list()
-  div_cutoff <- list()
-  
-  ## Divergence metrics
-  Ka <- divergence$Di/divergence$mi
-  Ks <- divergence$D0/divergence$m0
-  omega <- Ka/Ks
-  div_table <- data.frame(Ka, Ks, omega)
-  names(div_table) <- c("Ka", "Ks", "omega")
-  
-  ## Iterate along cutoffs
-  for (cutoff in listCutoffs) {
-    
-    daf_remove <-daf[daf$daf > cutoff,] 
-  
-    ## Create MKT table 
-    mkt_table <- data.frame(Polymorphism=c(sum(daf_remove$P0), sum(daf_remove$Pi)), Divergence=c(divergence$D0,divergence$Di), row.names=c("Neutral class","Selected class"))
-  
-    ## Estimate of alpha
-    alpha <- 1-(mkt_table[2,1]/mkt_table[1,1])*(mkt_table[1,2]/mkt_table[2,2])
-    
-    ## Fisher exact test p-value from the MKT
-    pvalue <- fisher.test(mkt_table)$p.value
-    
-    ## Omega A and Omega D
-    omegaA <- omega*alpha
-    omegaD <- omega-omegaA
-    
-    ## Store output  
-    output[[paste("Cutoff = ",cutoff)]] <- c(cutoff, alpha,pvalue)
-    div_cutoff[[paste("Cutoff = ",cutoff)]] <- c(cutoff, omegaA, omegaD)
-    mkt_tables[[paste("Cutoff = ",cutoff)]]  <- mkt_table
-  }
-  
-  ## Output format
-  output <- as.data.frame(do.call("rbind",output))
-  colnames(output) <- c("cutoff", "alpha", "pvalue")
- 
-  ## Divergence metrics
-  div_cutoff <- as.data.frame(do.call("rbind",div_cutoff))
-  names(div_cutoff) <- c("cutoff", "omegaA", "omegaD")
-  
-  ## Perform plot
-  if(plot == TRUE) {
-    ## Cut-offs graphs
-    plot <- ggplot(output, aes(x=as.factor(cutoff), y=alpha, group=1)) +
-      geom_line(color="#386cb0") + 
-      geom_point(size=2.5, color="#386cb0")+
-      themePublication() +
-      xlab("Cut-off") + ylab(expression(bold(paste("Adaptation (",alpha,")"))))
-  
-    ## Re-format outputs
-    output <- output[,c(2,3)]
-    names(output) <- c("alpha.symbol","Fishers exact test P-value")
-    div_cutoff <- div_cutoff[,c(2,3)]
-    colnames(div_cutoff) <- c("omegaA.symbol", "omegaD.symbol")
-    div_metrics <- list(div_table, div_cutoff)
-    names(div_metrics) <- c("Global metrics", "Estimates by cutoff")
-  
-    ## Return list
-    list_output <-list(output, plot, div_metrics, mkt_tables)
-    names(list_output) <- c("Results", "Graph", "Divergence metrics", "MKT tables")
-  
-  ## If no plot to perform  
-  } else if (plot == FALSE) {
-    ## Re-format outputs
-    output <- output[,c(2,3)]
-    names(output) <- c("alpha.symbol","Fishers exact test P-value")
-    div_cutoff <- div_cutoff[,c(2,3)]
-    colnames(div_cutoff) <- c("omegaA.symbol", "omegaD.symbol")
-    div_metrics <- list(div_table, div_cutoff)
-    names(div_metrics) <- c("Global metrics", "Estimates by cutoff")
-    
-    ## Return list
-    list_output <-list(output, div_metrics, mkt_tables)
-    names(list_output) <- c("Results", "Divergence metrics", "MKT tables")
-  }
-  
-  ## Return output
-  return(list_output)
+	## Declare output lists and data frames
+	output     = list()
+	mktTables  = list()
+	divMetrics = list()
+	divCutoff  = list()
+	
+	##Polymorphism and Divergence variables
+	P0 = sum(daf[['P0']])
+	Pi = sum(daf[['Pi']])
+	D0 = divergence[['D0']]
+	Di = divergence[['Di']]
+	m0 = divergence[['m0']]
+	mi = divergence[['mi']]
+
+	## Divergence metrics
+	Ka              = Di/mi
+	Ks              = D0/m0
+	omega           = Ka/Ks
+	divTable        = data.frame('Ka' = Ka, 'Ks' = Ks, 'omega' = omega)
+	
+	## Iterate along cutoffs
+	# Opening necessary variables to iter
+	P0         = sum(daf$P0) 
+	Pi         = sum(daf$Pi) 
+	cleanedDaf = daf
+	PiNeutral  = 0
+
+	mktTableStandard = data.frame(Polymorphism = c(sum(P0), sum(Pi)), Divergence=c(D0,Di),row.names = c("Neutral class","Selected class"))
+
+	## Iterate along cutoffs
+	alphaCorrected <- list()
+	for (c in listCutoffs) {
+		
+		dafRemove = daf[daf[['daf']] > c,] 
+	
+		## Create MKT table 
+		mktTableCleaned = data.frame(Polymorphism=c(sum(dafRemove[['P0']]), sum(dafRemove[['Pi']])), Divergence=c(D0,Di), row.names=c("Neutral class","Selected class"))
+	
+		## Estimate of alpha
+		alphaC = 1-(mktTableCleaned[2,1]/mktTableCleaned[1,1])*(mktTableCleaned[1,2]/mktTableCleaned[2,2])
+		
+		## Fisher exact test p-value from the MKT
+		pvalue = fisher.test(mktTableCleaned)$p.value
+		
+		## Omega A and Omega D
+		omegaA = omega * alphaC
+		omegaD = omega - omegaA
+		
+		## Store output  
+		alphaCorrected[[paste0('cutoff=',c)]] = c(c, alphaC, pvalue)
+		divCutoff[[paste0('cutoff=',c)]] = c(c, Ka,Ks,omegaA, omegaD)
+		# mktTables[[paste0('cutoff=',c)]]  = mktTableCleaned
+	}
+	
+	## Output format
+	output[['mktTable']]                 = mktTableStandard 
+	output[['alphaCorrected']]           = as.data.frame(do.call('rbind',alphaCorrected))
+	colnames(output[['alphaCorrected']]) = c('cutoff', 'alphaCorrected', 'pvalue')
+	## Divergence metricss
+	divCutoff                            = as.data.frame(do.call('rbind',divCutoff))
+	names(divCutoff)                     = c('cutoff', 'Ka','Ks','omegaA', 'omegaD')
+	output[['divMetrics']]               = list('metricsByCutoff'=divCutoff)
+
+	## Perform plot
+	if(plot == TRUE) {
+		## Cut-offs graphs
+		plot = ggplot(output[['alphaCorrected']], aes(x=as.factor(cutoff), y=alphaCorrected, group=1)) +
+			geom_line(color="#386cb0") + 
+			geom_point(size=2.5, color="#386cb0")+
+			themePublication() +
+			xlab("Cut-off") + ylab(expression(bold(paste("Adaptation (",alpha,")"))))
+	
+		## Re-format outputs
+		output[['graph']] = plot
+		
+		return(output)
+
+	## If no plot to perform  
+	} else if (plot == FALSE) {
+		return(output)
+	}
 }

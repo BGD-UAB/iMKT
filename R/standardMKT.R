@@ -19,35 +19,35 @@
 #' @export
 
 standardMKT <- function(daf, divergence) {
-  
-  ## Check data
-  check <-checkInput(daf, divergence, 0, 1)
-    if(check$data == FALSE) {
-     stop(check$print_errors) }
+	
+	## Check data
+	check <-checkInput(daf, divergence, 0, 1)
+	if(check$data == FALSE) {
+	 stop(check$print_errors) }
 
-  ## Declare output data frame
-  output <- data.frame(alpha = numeric(0), pvalue = integer(0))
-  
-  ## Create MKT table 
-  mkt_table <- data.frame(Polymorphism = c(sum(daf$P0), sum(daf$Pi)), Divergence=c(divergence$D0,divergence$Di), row.names = c("Neutral class","Selected class"))
-  
-  ## Estimation of alpha and fisher exact test p-value
-  alpha <- 1-(mkt_table[2,1]/mkt_table[1,1])*(mkt_table[1,2]/mkt_table[2,2])
-  pvalue <- fisher.test(mkt_table)$p.value
-  
-  ## Ka, Ks, omega, omegaA, omegaD
-  Ka <- divergence$Di/divergence$mi
-  Ks <- divergence$D0/divergence$m0
-  omega <- Ka/Ks
-  omegaA <- omega*alpha
-  omegaD <- omega-omegaA
-  divergence_metrics <- data.frame(Ka, Ks, omega, omegaA, omegaD)
-  
-  ## Output  
-  output <- list(`alpha.symbol`=alpha, 
-                 `Fishers exact test P-value`= pvalue, 
-                 `MKT table`= mkt_table,
-                 `Divergence metrics` = divergence_metrics)
-  return(output)
+	## Declare output data frame
+	output <- data.frame(alpha = numeric(0), pvalue = integer(0))
+	
+	## Create MKT table 
+	mktTable <- data.frame(Polymorphism = c(sum(daf$P0), sum(daf$Pi)), Divergence=c(divergence$D0,divergence$Di), row.names = c("Neutral class","Selected class"))
+	
+	## Estimation of alpha and fisher exact test p-value
+	alpha <- 1-(mktTable[2,1]/mktTable[1,1])*(mktTable[1,2]/mktTable[2,2])
+	pvalue <- fisher.test(mktTable)$p.value
+	
+	## Ka, Ks, omega, omegaA, omegaD
+	Ka     = divergence$Di/divergence$mi
+	Ks     = divergence$D0/divergence$m0
+	omega  = Ka/Ks
+	omegaA = omega*alpha
+	omegaD = omega-omegaA
+	divergenceMetrics = data.frame(Ka, Ks, omega, omegaA, omegaD)
+	
+	## Output  
+
+	output <- list('alpha'= data.frame('alpha' = alpha,'Fisher Test'= pvalue),
+		'mktTable'= mktTable,'divMetrics'=divergenceMetrics)
+	
+	return(output)
 }
 

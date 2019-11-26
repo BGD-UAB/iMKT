@@ -5,28 +5,28 @@
 \title{iMKT using PopFly data}
 \usage{
 PopFlyAnalysis(genes = c("gene1", "gene2", "..."), pops = c("pop1",
-  "pop2", "..."), cutoffs = c(0, 0.05, 0.1), recomb = TRUE/FALSE,
-  bins = 0, test = c("standardMKT", "DGRP", "FWW", "asymptoticMKT",
-  "iMKT"), xlow = 0, xhigh = 1, plot = FALSE)
+  "pop2", "..."), cutoff = 0.05, recomb = TRUE/FALSE, bins = 0,
+  test = c("standardMKT", "eMKT", "FWW", "aMKT"), xlow = 0,
+  xhigh = 1, plot = FALSE)
 }
 \arguments{
 \item{genes}{list of genes to analyze}
 
 \item{pops}{list of populations to analyze}
 
-\item{cutoffs}{list of cutofs to perform FWW and/or DGRP}
-
 \item{recomb}{group genes according to recombination values (TRUE/FALSE)}
 
 \item{bins}{number of recombination bins to compute (mandatory if recomb=TRUE)}
 
-\item{test}{which test to perform. Options include: standardMKT (default), DGRP, FWW, asymptoticMKT, iMKT}
+\item{test}{which test to perform. Options include: standardMKT (default), eMKT, FWW, aMKT}
 
 \item{xlow}{lower limit for asymptotic alpha fit (default=0)}
 
 \item{xhigh}{higher limit for asymptotic alpha fit (default=1)}
 
 \item{plot}{report plot (optional). Default is FALSE}
+
+\item{cutoffs}{list of cutofs to perform FWW and/or eMKT}
 }
 \value{
 List of lists with the default test output for each selected population (and recombination bin when defined)
@@ -35,16 +35,16 @@ List of lists with the default test output for each selected population (and rec
 Perform any MKT method using a subset of PopFly data defined by custom genes and populations lists
 }
 \details{
-Execute any MKT method (standardMKT, FWW, DGRP, asymptoticMKT, iMKT) using a subset of PopFly data defined by custom genes and populations lists. It uses the dataframe PopFlyData, which can be already loaded in the workspace (using loadPopFly()) or is directly loaded when executing this function. It also allows deciding whether to analyze genes groupped by recombination bins or not, using recombination rate estimates from Comeron et al. 2012 Plos Genetics.
+Execute any MKT method (standardMKT, FWW, eMKT, aMKT) using a subset of PopFly data defined by custom genes and populations lists. It uses the dataframe PopFlyData, which can be already loaded in the workspace (using loadPopFly()) or is directly loaded when executing this function. It also allows deciding whether to analyze genes groupped by recombination bins or not, using recombination rate estimates from Comeron et al. 2012 Plos Genetics.
 }
 \examples{
 ## List of genes
-mygenes <- c("FBgn0053196", "FBgn0086906", "FBgn0261836", "FBgn0031617", 
-             "FBgn0260965", "FBgn0028899", "FBgn0052580", "FBgn0036181",
-             "FBgn0263077", "FBgn0013733", "FBgn0031857", "FBgn0037836")
+mygenes = c('FBgn0053196', 'FBgn0086906', 'FBgn0261836', 'FBgn0031617', 
+             'FBgn0260965', 'FBgn0028899', 'FBgn0052580', 'FBgn0036181',
+             'FBgn0263077', 'FBgn0013733', 'FBgn0031857', 'FBgn0037836')
 ## Perform analyses
-PopFlyAnalysis(genes=mygenes, pops="RAL", recomb=FALSE, test="iMKT", xlow=0, xhigh=0.9, plot=TRUE)
-PopFlyAnalysis(genes=mygenes, pops=c("RAL","ZI"), recomb=TRUE, bins=3, test="DGRP", plot=FALSE)
+PopFlyAnalysis(genes=mygenes, pops='RAL', recomb=FALSE, test='aMKT', xlow=0, xhigh=0.9, plot=TRUE)
+PopFlyAnalysis(genes=mygenes, pops=c('RAL','ZI'), recomb=TRUE, bins=3, test='eMKT', plot=FALSE)
 
 }
 \keyword{PopData}
