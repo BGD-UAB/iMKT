@@ -131,7 +131,7 @@ aMKT = function(daf, divergence, xlow=0, xhigh=1, seed, plot=FALSE) {
 		asymptoticMkTable[2:8] = round(asymptoticMkTable[2:8],4)
 
 		# Delete column necessary to plot in fraction
-		output = list(asymptoticMkTable, fraction, plotsiMKT)
+		output = list(asymptoticMkTable, fraction, plotAlpha)
 		names(output) = c('alphaCorrected', 'fractions', 'graphs')	
 
 	}
