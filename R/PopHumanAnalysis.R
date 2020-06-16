@@ -49,8 +49,8 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 	## Argument genes
 	if (length(genes) == 0 || genes == "" || !is.character(genes)) {
 	stop("You must specify at least one gene.") }
-	if (!all(genes %in% data$id) == TRUE) {
-	difGenes <- setdiff(genes, data$id)
+	if (!all(genes %in% data$globalID) == TRUE) {
+	difGenes <- setdiff(genes, data$globalID)
 	difGenes <- paste(difGenes, collapse=", ")
 	stopMssg <- paste0("MKT data is not available for the requested gene(s).\nRemember to use gene IDs from Ensembl (ENSG...).\nThe genes that caused the error are: ", difGenes, ".")
 	stop(stopMssg) }
@@ -95,8 +95,8 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 	## Arguments xlow, xhigh features (numeric, bounds...) checked in checkInput()
 	
 	## Perform subset
-	subsetGenes <- data[(data$ID %in% genes & data$pop %in% pops), ]
-	subsetGenes$ID <- as.factor(subsetGenes$ID)
+	subsetGenes <- data[(data$globalID %in% genes & data$pop %in% pops), ]
+	subsetGenes$globalID <- as.factor(subsetGenes$globalID)
 	subsetGenes <- droplevels(subsetGenes)
 	
 	## If recomb analysis is selected
@@ -164,8 +164,8 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 		
 		## Group genes
 		x1 <- droplevels(x1)
-		for (l in levels(x1$ID)) {
-			x2 <- x1[x1$ID == l, ]
+		for (l in levels(x1$globalID)) {
+			x2 <- x1[x1$globalID == l, ]
 			
 			## DAF
 			x2$DAF0f <- as.character(x2$DAF0f); x2$DAF4f <- as.character(x2$DAF4f)
@@ -258,8 +258,8 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 		Di <- 0; D0 <- 0
 		
 		## Group genes
-		for (j in levels(x$id)) {
-		x1 <- x[x$id == j, ]
+		for (j in levels(x$globalID)) {
+		x1 <- x[x$globalID == j, ]
 		
 		## DAF
 		x1$DAF0f <- as.character(x1$DAF0f); x1$DAF4f <- as.character(x1$DAF4f)
