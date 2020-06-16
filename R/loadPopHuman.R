@@ -16,9 +16,9 @@
 #' @export
 
 loadPopHuman <- function() {
-	PopHumanData <- ""
+#	PopHumanData <- ""
 	cat("Loading PopHuman data into your workspace.\nThis process may take several seconds to complete, please be patient.\n")
-	x <- load(url("https://pophuman.uab.cat/files/genes/GenesData_ALL_iMKT.RData"))
+	load(url("https://pophuman.uab.cat/files/genes/GenesData_ALL_iMKT.RData"))
 	#x <- read.table("https://pophuman.uab.cat/files/genes/GenesData_ALL_iMKT.tab", header=T,sep='\t')
-	PopHumanData <<- x
+#	PopHumanData <<- x
 }
