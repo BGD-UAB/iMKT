@@ -4,7 +4,9 @@
 \name{myDafData}
 \alias{myDafData}
 \title{Sample DAF data frame}
-\format{A data frame containing polymorphic sites for selected (i) and neutral (0) classes at different DAF categories}
+\format{
+A data frame containing polymorphic sites for selected (i) and neutral (0) classes at different DAF categories
+}
 \usage{
 myDafData
 }

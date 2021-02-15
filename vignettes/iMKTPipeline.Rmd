@@ -1,4 +1,4 @@
----
+/---
 title: "iMKT Pipeline"
 output: 
   pdf_document:
@@ -71,13 +71,13 @@ The iMKT package includes several functions, classified as follows:
   \item
     FWW(): FWW correction 
   \item
-    DGRP(): DGRP correction   
+    imputedMKT(): imputedMKT correction   
   \item
     asymptoticMKT(): Asymptotic MKT 
   \item
     iMKT(): integrative MKT  
-  \item
-    completeMKT(): perform all previous tests
+  #\item
+    #completeMKT(): perform all previous tests
   \end{itemize}
 
 \item
@@ -169,7 +169,7 @@ The **FWW()** function uses daf and divergence input parameters, along with a de
 &nbsp;
 
 ```{r FWW, echo=TRUE}
-FWW(daf=myDafData, divergence=myDivergenceData)
+FWW(daf=myDafData, divergence=myDivergenceData,listCutoffs=c(0.05,0.1))
 ```
 
 &nbsp;
@@ -186,7 +186,7 @@ FWW(daf=myDafData, divergence=myDivergenceData, listCutoffs=c(0.05, 0.15,0.25,0.
 
 &nbsp;
 
-### DGRP correction
+### imputedMKT correction
 
 To take adaptive and slightly deleterious mutation mutually into account, Pn , the count of segregating sites in the non-synonymous class, should be separated into the number of neutral variants and the number of weakly deleterious variants, Pn = Pn(neutral) + Pn(weakly del.). If both numbers are estimated, adaptive and weakly deleterious selection can be evaluated independently. 
 
@@ -199,12 +199,12 @@ Add brief explanation about 2nd table!
 
 To estimate alpha from the standard MKT table correcting by the segregation of weakly deleterious variants, we have to substitute the Pn by the expected number of neutral segregating sites, Pn(neutral). The correct estimate of alpha is then alpha = 1 - (Pn (neutral)/Ps)(Ds/Dn).
 
-The **DGRP()** function behaves similar to the **FWW()** function. It takes the same input argument and returns the same output but containing also estimates on the **fractions of negative selection** (d: strongly deleterious, f: neutral and b: weakly deleterious).
+The **imputedMKT()** function behaves similar to the **FWW()** function. It takes the same input argument and returns the same output but containing also estimates on the **fractions of negative selection** (d: strongly deleterious, f: neutral and b: weakly deleterious).
 
 &nbsp;
 
-```{r DGRP, echo=TRUE}
-DGRP(daf=myDafData, divergence=myDivergenceData)
+```{r imputedMKT, echo=TRUE}
+imputedMKT(daf=myDafData, divergence=myDivergenceData,listCutoffs=c(0.05))
 ```
 
 &nbsp;
@@ -216,7 +216,7 @@ The output in this case contains two **Graphs** which show the adaptation value 
 &nbsp;
 
 ```{r, echo=TRUE, fig.width=6, fig.height=6}
-DGRP(daf=myDafData, divergence=myDivergenceData, listCutoffs=c(0.05, 0.15,0.25,0.35), plot=TRUE)
+imputedMKT(daf=myDafData, divergence=myDivergenceData, listCutoffs=c(0.05, 0.15,0.25,0.35), plot=TRUE)
 ```
 
 &nbsp;
@@ -256,7 +256,7 @@ The output of the function contains:
 &nbsp;
 
 ```{r iMKT, echo=TRUE, fig.width=6, fig.height=9}
-iMKT(daf=myDafData, divergence=myDivergenceData, xlow=0, xhigh=0.9, plot=TRUE)
+aMKT(daf=myDafData, divergence=myDivergenceData, xlow=0, xhigh=0.9, plot=TRUE)
 ```
 
 &nbsp;

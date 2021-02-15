@@ -2,14 +2,14 @@
 #'
 #' @description Perform any MKT method using a subset of PopFly data defined by custom genes and populations lists
 #'
-#' @details Execute any MKT method (standardMKT, FWW, eMKT, aMKT) using a subset of PopFly data defined by custom genes and populations lists. It uses the dataframe PopFlyData, which can be already loaded in the workspace (using loadPopFly()) or is directly loaded when executing this function. It also allows deciding whether to analyze genes groupped by recombination bins or not, using recombination rate estimates from Comeron et al. 2012 Plos Genetics. 
+#' @details Execute any MKT method (standardMKT, FWW, imputedMKT, aMKT) using a subset of PopFly data defined by custom genes and populations lists. It uses the dataframe PopFlyData, which can be already loaded in the workspace (using loadPopFly()) or is directly loaded when executing this function. It also allows deciding whether to analyze genes groupped by recombination bins or not, using recombination rate estimates from Comeron et al. 2012 Plos Genetics. 
 #' 
 #' @param genes list of genes to analyze
 #' @param pops list of populations to analyze
-#' @param cutoffs list of cutofs to perform FWW and/or eMKT
+#' @param cutoffs list of cutofs to perform FWW and/or imputedMKT
 #' @param recomb group genes according to recombination values (TRUE/FALSE)
 #' @param bins number of recombination bins to compute (mandatory if recomb=TRUE)
-#' @param test which test to perform. Options include: standardMKT (default), eMKT, FWW, aMKT
+#' @param test which test to perform. Options include: standardMKT (default), imputedMKT, FWW, aMKT
 #' @param xlow lower limit for asymptotic alpha fit (default=0)
 #' @param xhigh higher limit for asymptotic alpha fit (default=1)
 #' @param plot report plot (optional). Default is FALSE
@@ -23,7 +23,7 @@
 #'              'FBgn0263077', 'FBgn0013733', 'FBgn0031857', 'FBgn0037836')
 #' ## Perform analyses
 #' PopFlyAnalysis(genes=mygenes, pops='RAL', recomb=FALSE, test='aMKT', xlow=0, xhigh=0.9, plot=TRUE)
-#' PopFlyAnalysis(genes=mygenes, pops=c('RAL','ZI'), recomb=TRUE, bins=3, test='eMKT', plot=FALSE)
+#' PopFlyAnalysis(genes=mygenes, pops=c('RAL','ZI'), recomb=TRUE, bins=3, test='imputedMKT', plot=FALSE)
 #' 
 #' @import utils
 #' @import stats
@@ -31,7 +31,7 @@
 #' @keywords PopData
 #' @export
 
-PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','...'), cutoff=0.05, recomb=TRUE/FALSE, bins=0, test=c('standardMKT','eMKT','FWW','aMKT'), xlow=0, xhigh=1, plot=FALSE) { 
+PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','...'), cutoff=0.05, recomb=TRUE/FALSE, bins=0, test=c('standardMKT','imputedMKT','FWW','aMKT'), xlow=0, xhigh=1, plot=FALSE) { 
 	
 	## Get PopFly data
 	if (exists('PopFlyData') == TRUE) {
@@ -82,12 +82,12 @@ PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','
 	if(missing(test)) {
 	test = 'standardMKT'
 	}
-	else if (test != 'standardMKT' && test != 'eMKT' && test != 'FWW' && test != 'aMKT') {
-	stop('Parameter test must be one of the following: standardMKT, eMKT, FWW, asymptoticMKT, aMKT')
+	else if (test != 'standardMKT' && test != 'imputedMKT' && test != 'FWW' && test != 'aMKT') {
+	stop('Parameter test must be one of the following: standardMKT, imputedMKT, FWW, asymptoticMKT, aMKT')
 	}
 	if (length(test) > 1) {
-	stop('Select only one of the following tests to perform: standardMKT, eMKT, FWW, aMKT') }
-	if ((test == 'standardMKT' || test == 'eMKT' || test == 'FWW') && (xlow != 0 || xhigh != 1)) {
+	stop('Select only one of the following tests to perform: standardMKT, imputedMKT, FWW, aMKT') }
+	if ((test == 'standardMKT' || test == 'imputedMKT' || test == 'FWW') && (xlow != 0 || xhigh != 1)) {
 	warningMssgTest = paste0('Parameters xlow and xhigh not used! (test = ',test,' selected)')
 	warning(warningMssgTest) }
 	
@@ -96,6 +96,7 @@ PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','
 	## Perform subset
 	subsetGenes = data[(data$Name %in% genes & data$Pop %in% pops), ]
 	subsetGenes$Name = as.factor(subsetGenes$Name)
+	subsetGenes$Pop = as.factor(subsetGenes$Pop)
 	subsetGenes = droplevels(subsetGenes)
 	
 	## If recomb analysis is selected
@@ -198,11 +199,11 @@ PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','
 		if(test == 'standardMKT') {
 			output = standardMKT(daf, div) 
 			output = c(output, recStats) } ## Add recomb summary for bin j
-		else if(test == 'eMKT' && plot == FALSE) {
-			output = eMKT(daf, div,listCutoffs=cutoffs) 
+		else if(test == 'imputedMKT' && plot == FALSE) {
+			output = imputedMKT(daf, div,listCutoffs=cutoffs) 
 			output = c(output, recStats) }
-		else if(test == 'eMKT' && plot == TRUE) {
-			output = eMKT(daf, div,listCutoffs=cutoffs, plot=TRUE) 
+		else if(test == 'imputedMKT' && plot == TRUE) {
+			output = imputedMKT(daf, div,listCutoffs=cutoffs, plot=TRUE) 
 			output = c(output, recStats) }
 		else if(test == 'FWW' && plot == FALSE) {
 			output = FWW(daf, div, listCutoffs=cutoffs)           
@@ -288,10 +289,10 @@ PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','
 		## Perform test
 		if(test == 'standardMKT') {
 			output = standardMKT(daf, div) }
-		else if(test == 'eMKT' && plot == FALSE) {
-			output = eMKT(daf, div,listCutoffs=cutoff) }
-		else if(test == 'eMKT' && plot == TRUE) {
-			output = eMKT(daf, div,listCutoffs=cutoff, plot=TRUE) }
+		else if(test == 'imputedMKT' && plot == FALSE) {
+			output = imputedMKT(daf, div,listCutoffs=cutoff) }
+		else if(test == 'imputedMKT' && plot == TRUE) {
+			output = imputedMKT(daf, div,listCutoffs=cutoff, plot=TRUE) }
 		else if(test == 'FWW' && plot == FALSE) {
 			output = FWW(daf, div, listCutoffs=cutoff) }
 		else if(test == 'FWW' && plot == TRUE) {

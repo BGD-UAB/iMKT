@@ -13,7 +13,7 @@
 #' @return List with the diverse MKT results: standardMKT, FWW, DGRP, asymptoticMKT, iMKT
 #'
 #' @examples 
-#' completeMKT(myDafData, myDivergenceData, xlow=0, xhigh=0.9)
+#' completimputedMKT(myDafData, myDivergenceData, xlow=0, xhigh=0.9)
 #' 
 #' @import utils
 #' @import stats
@@ -21,7 +21,7 @@
 #' @keywords MKT
 #' @export
 
-completeMKT = function(daf, divergence, xlow, xhigh, seed) {
+completimputedMKT = function(daf, divergence, xlow, xhigh, seed) {
 	
 	## Check data
 	check = checkInput(daf, divergence, xlow, xhigh)

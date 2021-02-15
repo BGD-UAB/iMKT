@@ -4,7 +4,9 @@
 \name{myDivergenceData}
 \alias{myDivergenceData}
 \title{Sample Divergence data frame}
-\format{A data frame containing divergent and analyzed sites for selected (i) and neutral (0) classes}
+\format{
+A data frame containing divergent and analyzed sites for selected (i) and neutral (0) classes
+}
 \usage{
 myDivergenceData
 }

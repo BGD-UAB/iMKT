@@ -1,6 +1,6 @@
-#' @title eMKT correction method
+#' @title imputedMKT correction method
 #'
-#' @description MKT calculation corrected using eMKT method (Mackay et al. 2012 Nature).
+#' @description MKT calculation corrected using imputedMKT method (Mackay et al. 2012 Nature).
 #'
 #' @details In the standard McDonald and Kreitman test, the estimate of adaptive evolution (alpha) can be easily biased by the segregation of slightly deleterious non-synonymous substitutions. Specifically, slightly deleterious mutations contribute more to polymorphism than they do to Divergence, and thus, lead to an underestimation of alpha. Because adaptive mutations and weakly deleterious selection act in opposite Directions on the MKT, alpha and the fraction of substitutions that are slighlty deleterious, b, will be both underestimated when both selection regimes occur. To take adaptive and slighlty deleterious mutations mutually into account, Pi, the count off segregatning sites in class i, should be separated into the number of neutral variants and the number of weakly deleterious variants, Pi = Pineutral + Pi weak del. Alpha is then estimated as 1-(Pineutral/P0)(D0/Di). As weakly deleterious mutations tend to segregate at low frequencies, neutral and weakly deleterious fractions from Pi can be estimated based on any frequency cutoff established.
 #'
@@ -9,13 +9,13 @@
 #' @param listCutoffs list of cutoffs to use (optional). Default cutoffs are: 0, 0.05, 0.1
 #' @param plot report plot (optional). Default is FALSE
 #' 
-#' @return MKT corrected by the eMKT method. List with alpha results, graph (optional), Divergence metrics, MKT tables and negative selection fractions
+#' @return MKT corrected by the imputedMKT method. List with alpha results, graph (optional), Divergence metrics, MKT tables and negative selection fractions
 #'
 #' @examples
 #' ## Using default cutoffs
-#' eMKT(myDafData, myDivergenceData)
+#' imputedMKT(myDafData, myDivergenceData)
 #' ## Using custom cutoffs and rendering plot
-#' eMKT(myDafData, myDivergenceData, c(0.05, 0.1, 0.15), plot=TRUE)
+#' imputedMKT(myDafData, myDivergenceData, c(0.05, 0.1, 0.15), plot=TRUE)
 #'
 #' @import utils
 #' @import stats
@@ -32,7 +32,7 @@
 ################# MKT-FWW function #################
 ####################################################
 
-eMKT = function(daf, divergence, listCutoffs, plot=FALSE) {
+imputedMKT = function(daf, divergence, listCutoffs, plot=FALSE) {
 	
 	## Check data
 	check = checkInput(daf, divergence, 0, 1)
@@ -162,7 +162,7 @@ eMKT = function(daf, divergence, listCutoffs, plot=FALSE) {
 		i = which.max(output$alphaCorrected$alphaCorrected)
 		fractionsMelt = output[['fractions']][i,2:4]
 		fractionsMelt = reshape2::melt(fractionsMelt, id.vars=NULL) 
-		fractionsMelt[['test']] = rep(c('eMKT'),3)
+		fractionsMelt[['test']] = rep(c('imputedMKT'),3)
 
 		plotFraction = ggplot(fractionsMelt) + geom_bar(stat="identity", aes_string(x="test", y="value", fill="variable"), color="black") +
 			coord_flip() + themePublication() + ylab(label="Fraction") + xlab(label="Cut-off") +
