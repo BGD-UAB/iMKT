@@ -3,3 +3,4 @@
 .Rbuildignore
 ..gitignore.swp
 /Meta/
+/doc/
