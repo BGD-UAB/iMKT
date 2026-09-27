@@ -4,12 +4,21 @@
 \alias{completimputedMKT}
 \title{Complete MK methodologies}
 \usage{
-completimputedMKT(daf, divergence, xlow, xhigh, seed)
+completimputedMKT(
+  daf,
+  divergence,
+  listCutoffs = c(0, 0.05, 0.1),
+  xlow = 0,
+  xhigh = 1,
+  seed
+)
 }
 \arguments{
 \item{daf}{data frame containing DAF, Pi and P0 values}
 
 \item{divergence}{data frame containing divergent and analyzed sites for selected (i) and neutral (0) classes}
+
+\item{listCutoffs}{list of cutoffs to use for FWW/eMKT/imputedMKT (optional). Default cutoffs are: 0, 0.05, 0.1}
 
 \item{xlow}{lower limit for asymptotic alpha fit}
 
@@ -18,10 +27,10 @@ completimputedMKT(daf, divergence, xlow, xhigh, seed)
 \item{seed}{seed value (optional). No seed by default}
 }
 \value{
-List with the diverse MKT results: standardMKT, FWW, DGRP, asymptoticMKT, iMKT
+List with the diverse MKT results: standardMKT, FWW, eMKT, imputedMKT, aMKT
 }
 \description{
-MKT calculation using all methodologies included in the package: standardMKT, FWW, DGRP, asymptoticMKT, iMKT.
+MKT calculation using all methodologies included in the package: standardMKT, FWW, eMKT, imputedMKT, aMKT.
 }
 \details{
 Perform all MKT derived methodologies at once using the same input data and parameters.

@@ -1,13 +1,13 @@
 #' @title imputedMKT correction method
 #'
-#' @description MKT calculation corrected using imputedMKT method (Mackay et al. 2012 Nature).
+#' @description MKT calculation corrected using imputedMKT method (Murga-Moreno et al. 2022 G3).
 #'
-#' @details In the standard McDonald and Kreitman test, the estimate of adaptive evolution (alpha) can be easily biased by the segregation of slightly deleterious non-synonymous substitutions. Specifically, slightly deleterious mutations contribute more to polymorphism than they do to Divergence, and thus, lead to an underestimation of alpha. Because adaptive mutations and weakly deleterious selection act in opposite Directions on the MKT, alpha and the fraction of substitutions that are slighlty deleterious, b, will be both underestimated when both selection regimes occur. To take adaptive and slighlty deleterious mutations mutually into account, Pi, the count off segregatning sites in class i, should be separated into the number of neutral variants and the number of weakly deleterious variants, Pi = Pineutral + Pi weak del. Alpha is then estimated as 1-(Pineutral/P0)(D0/Di). As weakly deleterious mutations tend to segregate at low frequencies, neutral and weakly deleterious fractions from Pi can be estimated based on any frequency cutoff established.
+#' @details In the standard McDonald and Kreitman test, the estimate of adaptive evolution (alpha) can be easily biased by the segregation of slightly deleterious non-synonymous substitutions. Specifically, slightly deleterious mutations contribute more to polymorphism than they do to Divergence, and thus, lead to an underestimation of alpha. Because adaptive mutations and weakly deleterious selection act in opposite Directions on the MKT, alpha and the fraction of substitutions that are slightly deleterious, b, will be both underestimated when both selection regimes occur. To take adaptive and slightly deleterious mutations mutually into account, Pi, the count off segregating sites in class i, should be separated into the number of neutral variants and the number of weakly deleterious variants, Pi = Pineutral + Pi weak del. Alpha is then estimated as 1-(Pineutral/P0)(D0/Di). As weakly deleterious mutations tend to segregate at low frequencies, neutral and weakly deleterious fractions from Pi can be estimated based on any frequency cutoff established.
 #'
 #' @param daf data frame containing DAF, Pi and P0 values
-#' @param Divergence data frame containing Divergent and analyzed sites for selected (i) and neutral (0) classes
+#' @param divergence data frame containing divergent and analyzed sites for selected (i) and neutral (0) classes
 #' @param listCutoffs list of cutoffs to use (optional). Default cutoffs are: 0, 0.05, 0.1
-#' @param plot report plot (optional). Default is FALSE
+#' #' @param plot report plot (optional). Default is FALSE
 #' 
 #' @return MKT corrected by the imputedMKT method. List with alpha results, graph (optional), Divergence metrics, MKT tables and negative selection fractions
 #'
@@ -32,7 +32,7 @@
 ################# MKT-FWW function #################
 ####################################################
 
-imputedMKT = function(daf, divergence, listCutoffs, plot=FALSE) {
+imputedMKT = function(daf, divergence, listCutoffs=c(0, 0.05, 0.1), plot = FALSE) {
 	
 	## Check data
 	check = checkInput(daf, divergence, 0, 1)
@@ -164,10 +164,10 @@ imputedMKT = function(daf, divergence, listCutoffs, plot=FALSE) {
 		fractionsMelt = reshape2::melt(fractionsMelt, id.vars=NULL) 
 		fractionsMelt[['test']] = rep(c('imputedMKT'),3)
 
-		plotFraction = ggplot(fractionsMelt) + geom_bar(stat="identity", aes_string(x="test", y="value", fill="variable"), color="black") +
+		plotFraction = ggplot(fractionsMelt) + geom_bar(stat="identity", aes(x=test, y=value, fill=variable), color="black") +
 			coord_flip() + themePublication() + ylab(label="Fraction") + xlab(label="Cut-off") +
 			scale_fill_manual(values=c("#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33"), breaks=c("f","d","b"), labels=c(expression(italic("f")),expression(italic("d")),expression(italic("b")))) +
-			theme(axis.line=element_blank()) + scale_y_discrete(limit=seq(0,1,0.25), expand=c(0,0))
+			theme(axis.line=element_blank()) + scale_y_continuous(limits=c(0,1), breaks=seq(0,1,0.25), expand=c(0,0))
 	
 		plotEmkt = plot_grid(plotAlpha, plotFraction, nrow=2,  labels=c('A','B'), rel_heights=c(2,1))
 

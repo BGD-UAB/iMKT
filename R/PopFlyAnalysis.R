@@ -2,14 +2,14 @@
 #'
 #' @description Perform any MKT method using a subset of PopFly data defined by custom genes and populations lists
 #'
-#' @details Execute any MKT method (standardMKT, FWW, imputedMKT, aMKT) using a subset of PopFly data defined by custom genes and populations lists. It uses the dataframe PopFlyData, which can be already loaded in the workspace (using loadPopFly()) or is directly loaded when executing this function. It also allows deciding whether to analyze genes groupped by recombination bins or not, using recombination rate estimates from Comeron et al. 2012 Plos Genetics. 
+#' @details Execute any MKT method (standardMKT, FWW, imputedMKT, eMKT, aMKT) using a subset of PopFly data defined by custom genes and populations lists. It uses the dataframe PopFlyData, which can be already loaded in the workspace (using loadPopFly()) or is directly loaded when executing this function. It also allows deciding whether to analyze genes groupped by recombination bins or not, using recombination rate estimates from Comeron et al. 2012 Plos Genetics. 
 #' 
 #' @param genes list of genes to analyze
 #' @param pops list of populations to analyze
-#' @param cutoffs list of cutofs to perform FWW and/or imputedMKT
+#' @param cutoff list of cutoffs to perform FWW, eMKT and/or imputedMKT
 #' @param recomb group genes according to recombination values (TRUE/FALSE)
 #' @param bins number of recombination bins to compute (mandatory if recomb=TRUE)
-#' @param test which test to perform. Options include: standardMKT (default), imputedMKT, FWW, aMKT
+#' @param test which test to perform. Options include: standardMKT (default), imputedMKT, eMKT, FWW, aMKT
 #' @param xlow lower limit for asymptotic alpha fit (default=0)
 #' @param xhigh higher limit for asymptotic alpha fit (default=1)
 #' @param plot report plot (optional). Default is FALSE
@@ -22,7 +22,7 @@
 #'              'FBgn0260965', 'FBgn0028899', 'FBgn0052580', 'FBgn0036181',
 #'              'FBgn0263077', 'FBgn0013733', 'FBgn0031857', 'FBgn0037836')
 #' ## Perform analyses
-#' PopFlyAnalysis(genes=mygenes, pops='RAL', recomb=FALSE, test='aMKT', xlow=0, xhigh=0.9, plot=TRUE)
+#' PopFlyAnalysis(genes=mygenes, pops='ZI', recomb=FALSE, test='aMKT', xlow=0, xhigh=0.9, plot=TRUE)
 #' PopFlyAnalysis(genes=mygenes, pops=c('RAL','ZI'), recomb=TRUE, bins=3, test='imputedMKT', plot=FALSE)
 #' 
 #' @import utils
@@ -31,7 +31,7 @@
 #' @keywords PopData
 #' @export
 
-PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','...'), cutoff=0.05, recomb=TRUE/FALSE, bins=0, test=c('standardMKT','imputedMKT','FWW','aMKT'), xlow=0, xhigh=1, plot=FALSE) { 
+PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','...'), cutoff=0.05, recomb=TRUE/FALSE, bins=0, test=c('standardMKT','imputedMKT','eMKT','FWW','aMKT'), xlow=0, xhigh=1, plot=FALSE) { 
 	
 	## Get PopFly data
 	if (exists('PopFlyData') == TRUE) {
@@ -46,7 +46,7 @@ PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','
 	stop('You must specify 3 arguments at least: genes, pops, recomb (T/F).\nIf test = aMKT, you must specify xlow and xhigh values.') }
 	
 	## Argument genes
-	if (length(genes) == 0 || genes == '' || !is.character(genes)) {
+	if (length(genes) == 0 || all(genes == '') || !is.character(genes)) {
 	stop('You must specify at least one gene.') }
 	if (!all(genes %in% data$Name) == TRUE) {
 	difGenes = setdiff(genes, data$Name)
@@ -55,7 +55,7 @@ PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','
 	stop(stopMssg) }
 	
 	## Argument pops
-	if (length(pops) == 0 || pops == '' || !is.character(pops)) {
+	if (length(pops) == 0 || all(pops == '') || !is.character(pops)) {
 	stop('You must specify at least one population.') }
 	if (!all(pops %in% data$Pop) == TRUE) {
 	correctPops = c('AM','AUS','CHB','EA','EF','EG','ENA','EQA','FR','RAL','SA','SD','SP','USI','USW','ZI')
@@ -82,12 +82,12 @@ PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','
 	if(missing(test)) {
 	test = 'standardMKT'
 	}
-	else if (test != 'standardMKT' && test != 'imputedMKT' && test != 'FWW' && test != 'aMKT') {
-	stop('Parameter test must be one of the following: standardMKT, imputedMKT, FWW, asymptoticMKT, aMKT')
+	else if (test != 'standardMKT' && test != 'imputedMKT' && test != 'eMKT' && test != 'FWW' && test != 'aMKT') {
+	stop('Parameter test must be one of the following: standardMKT, imputedMKT, eMKT, FWW, asymptoticMKT, aMKT')
 	}
 	if (length(test) > 1) {
-	stop('Select only one of the following tests to perform: standardMKT, imputedMKT, FWW, aMKT') }
-	if ((test == 'standardMKT' || test == 'imputedMKT' || test == 'FWW') && (xlow != 0 || xhigh != 1)) {
+	stop('Select only one of the following tests to perform: standardMKT, imputedMKT, eMKT, FWW, aMKT') }
+	if ((test == 'standardMKT' || test == 'imputedMKT' || test == 'eMKT' || test == 'FWW') && (xlow != 0 || xhigh != 1)) {
 	warningMssgTest = paste0('Parameters xlow and xhigh not used! (test = ',test,' selected)')
 	warning(warningMssgTest) }
 	
@@ -115,29 +115,13 @@ PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','
 		x = x[order(x$cM_Mb), ]
 		
 		## create bins
-		binsize = round(nrow(x)/bins) ## Number of genes for each bin
-		count = 1
-		x$Group = ''
-		dat = x[FALSE, ] ## Create df with colnames
-		
-		for (i in 0:nrow(x)) {
-		if (i%%binsize == 0) { ## Only if reminder of division = 0 (equally sized bins)
-			i1 = i + binsize
-			if (i == 0) {
-			g1 = x[i:binsize,]
-			group = count
-			g1$Group = group
-			dat[i:binsize,] = g1
-			count = count+1 }
-			else if (i1 <= nrow(x)) {
-			ii = i+1
-			g1 = x[ii:i1,]
-			group = count
-			g1$Group = group
-			dat[ii:i1,] = g1
-			count = count+1 }
-		}
-		}
+		## NOTE: replaced the previous manual binsize/modulo loop, which
+		## silently dropped an entire bin's worth of genes whenever
+		## nrow(x) was not exactly divisible by 'bins' (confirmed bug:
+		## with bins=3 on 2822 genes, 940 genes were lost). cut() assigns
+		## every gene to exactly one of 'bins' groups, with no gene left out.
+		x$Group = cut(seq_len(nrow(x)), breaks = bins, labels = FALSE)
+		dat = x
 		dat$Group = as.factor(dat$Group)
 
 		## Iterate through each recomb bin
@@ -200,16 +184,22 @@ PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','
 			output = standardMKT(daf, div) 
 			output = c(output, recStats) } ## Add recomb summary for bin j
 		else if(test == 'imputedMKT' && plot == FALSE) {
-			output = imputedMKT(daf, div,listCutoffs=cutoffs) 
+			output = imputedMKT(daf, div,listCutoffs=cutoff) 
 			output = c(output, recStats) }
 		else if(test == 'imputedMKT' && plot == TRUE) {
-			output = imputedMKT(daf, div,listCutoffs=cutoffs, plot=TRUE) 
+			output = imputedMKT(daf, div,listCutoffs=cutoff, plot=TRUE) 
+			output = c(output, recStats) }
+		else if(test == 'eMKT' && plot == FALSE) {
+			output = eMKT(daf, div, listCutoffs=cutoff)
+			output = c(output, recStats) }
+		else if(test == 'eMKT' && plot == TRUE) {
+			output = eMKT(daf, div, listCutoffs=cutoff, plot=TRUE)
 			output = c(output, recStats) }
 		else if(test == 'FWW' && plot == FALSE) {
-			output = FWW(daf, div, listCutoffs=cutoffs)           
+			output = FWW(daf, div, listCutoffs=cutoff)           
 			output = c(output, recStats) }
 		else if(test == 'FWW' && plot == TRUE) {
-			output = FWW(daf, div, listCutoffs=cutoffs, plot=TRUE)           
+			output = FWW(daf, div, listCutoffs=cutoff, plot=TRUE)           
 			output = c(output, recStats) }
 		else if(test == 'aMKT' && plot == TRUE) {
 			output = aMKT(daf1, div, xlow, xhigh, plot=TRUE)
@@ -293,6 +283,10 @@ PopFlyAnalysis = function(genes=c('gene1','gene2','...'), pops=c('pop1','pop2','
 			output = imputedMKT(daf, div,listCutoffs=cutoff) }
 		else if(test == 'imputedMKT' && plot == TRUE) {
 			output = imputedMKT(daf, div,listCutoffs=cutoff, plot=TRUE) }
+		else if(test == 'eMKT' && plot == FALSE) {
+			output = eMKT(daf, div, listCutoffs=cutoff) }
+		else if(test == 'eMKT' && plot == TRUE) {
+			output = eMKT(daf, div, listCutoffs=cutoff, plot=TRUE) }
 		else if(test == 'FWW' && plot == FALSE) {
 			output = FWW(daf, div, listCutoffs=cutoff) }
 		else if(test == 'FWW' && plot == TRUE) {

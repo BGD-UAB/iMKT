@@ -2,7 +2,7 @@
 #'
 #' @description Load PopHuman dataset with information regarding protein coding gene annotations
 #'
-#' @details This function loads PopHuman data (Mulet et al. 2017 NAR, http://pophuman.uab.cat/) into the current workspace. Data is stored in a dataframe named PopHumanData, which includes population genetics estimates (nucleotide diversity, divergence, basic tests of neutrality, recombination rates, etc.) regarding each protein coding gene for 26 worldwide Homo sapiens populations from the 1000 Genomes Project (The 1000 Genomes Project Consortium 2012 Nature, The 1000 Genomes Project Consortium 2015 Nature).
+#' @details This function loads PopHuman data (Casillas et al. 2018 Nucleic Acids Research, http://pophuman.uab.cat/) into the current workspace. Data is stored in a dataframe named PopHumanData, which includes population genetics estimates (nucleotide diversity, divergence, basic tests of neutrality, recombination rates, etc.) regarding each protein coding gene for 26 worldwide Homo sapiens populations from the 1000 Genomes Project (The 1000 Genomes Project Consortium 2012 Nature, The 1000 Genomes Project Consortium 2015 Nature).
 #' 
 #' @return PopHumanData object loaded in the workspace
 #'

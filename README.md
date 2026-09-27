@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/sergihervas/iMKT.svg?branch=master)](https://travis-ci.org/sergihervas/iMKT)
-
 # iMKT: integrative McDonald and Kreitman Test
 
 
@@ -69,12 +67,20 @@ standardMKT(myDafData, myDivergenceData)
 
 Citation
 --------
-Citation to paper
+Please cite the following paper if you use iMKT:
+
+Murga-Moreno J, Coronado-Zamora M, Hervas S, Casillas S, Barbadilla A. iMKT: the integrative McDonald and Kreitman test. Nucleic Acids Res. 2019 Jul 2;47(W1):W283-W288. doi: 10.1093/nar/gkz372
+
+Please also cite the following paper if you use the imputed MKT:
+
+
+Murga-Moreno J, Coronado-Zamora M, Casillas S, Barbadilla A. impMKT: the imputed McDonald and Kreitman test, a straightforward correction that significantly increases the evidence of positive selection of the McDonald and Kreitman test at the gene level. G3 (Bethesda). 2022 Sep 30;12(10):jkac206. doi: 10.1093/g3journal/jkac206
 
 
 Licence
 -------
-Licence of package
+This package is licensed under the GNU General Public License v3.0 (GPL-3).
+See https://www.gnu.org/licenses/gpl-3.0.en.html for the full license text.
 
 
 Development & Contact

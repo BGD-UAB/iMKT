@@ -9,7 +9,7 @@
 #' @param listCutoffs list of cutoffs to use (optional). Default cutoffs are: 0, 0.05, 0.1
 #' @param plot report plot (optional). Default is FALSE
 #' 
-#' @return MKT corrected by the FWW method. List with alpha results, graph (optional), divergence metrics, MKT tables and negative selection fractions
+#' @return MKT corrected by the FWW method. List with alpha results, graph (optional), divergence metrics and MKT table
 #'
 #' @examples
 #' ## Using default cutoffs
@@ -26,7 +26,7 @@
 #' @keywords MKT
 #' @export
 
-FWW = function(daf, divergence, listCutoffs, plot=FALSE) {
+FWW = function (daf, divergence, listCutoffs=c(0, 0.05, 0.1), plot = FALSE) {
 	
 	## Check data
 	check = checkInput(daf, divergence, 0, 1)
