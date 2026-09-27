@@ -4,25 +4,24 @@
 \alias{imputedMKT}
 \title{imputedMKT correction method}
 \usage{
-imputedMKT(daf, divergence, listCutoffs, plot = FALSE)
+imputedMKT(daf, divergence, listCutoffs = c(0, 0.05, 0.1), plot = FALSE)
 }
 \arguments{
 \item{daf}{data frame containing DAF, Pi and P0 values}
 
-\item{listCutoffs}{list of cutoffs to use (optional). Default cutoffs are: 0, 0.05, 0.1}
+\item{divergence}{data frame containing divergent and analyzed sites for selected (i) and neutral (0) classes}
 
-\item{plot}{report plot (optional). Default is FALSE}
-
-\item{Divergence}{data frame containing Divergent and analyzed sites for selected (i) and neutral (0) classes}
+\item{listCutoffs}{list of cutoffs to use (optional). Default cutoffs are: 0, 0.05, 0.1
+#' @param plot report plot (optional). Default is FALSE}
 }
 \value{
 MKT corrected by the imputedMKT method. List with alpha results, graph (optional), Divergence metrics, MKT tables and negative selection fractions
 }
 \description{
-MKT calculation corrected using imputedMKT method (Mackay et al. 2012 Nature).
+MKT calculation corrected using imputedMKT method (Murga-Moreno et al. 2022 G3).
 }
 \details{
-In the standard McDonald and Kreitman test, the estimate of adaptive evolution (alpha) can be easily biased by the segregation of slightly deleterious non-synonymous substitutions. Specifically, slightly deleterious mutations contribute more to polymorphism than they do to Divergence, and thus, lead to an underestimation of alpha. Because adaptive mutations and weakly deleterious selection act in opposite Directions on the MKT, alpha and the fraction of substitutions that are slighlty deleterious, b, will be both underestimated when both selection regimes occur. To take adaptive and slighlty deleterious mutations mutually into account, Pi, the count off segregatning sites in class i, should be separated into the number of neutral variants and the number of weakly deleterious variants, Pi = Pineutral + Pi weak del. Alpha is then estimated as 1-(Pineutral/P0)(D0/Di). As weakly deleterious mutations tend to segregate at low frequencies, neutral and weakly deleterious fractions from Pi can be estimated based on any frequency cutoff established.
+In the standard McDonald and Kreitman test, the estimate of adaptive evolution (alpha) can be easily biased by the segregation of slightly deleterious non-synonymous substitutions. Specifically, slightly deleterious mutations contribute more to polymorphism than they do to Divergence, and thus, lead to an underestimation of alpha. Because adaptive mutations and weakly deleterious selection act in opposite Directions on the MKT, alpha and the fraction of substitutions that are slightly deleterious, b, will be both underestimated when both selection regimes occur. To take adaptive and slightly deleterious mutations mutually into account, Pi, the count off segregating sites in class i, should be separated into the number of neutral variants and the number of weakly deleterious variants, Pi = Pineutral + Pi weak del. Alpha is then estimated as 1-(Pineutral/P0)(D0/Di). As weakly deleterious mutations tend to segregate at low frequencies, neutral and weakly deleterious fractions from Pi can be estimated based on any frequency cutoff established.
 }
 \examples{
 ## Using default cutoffs

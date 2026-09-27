@@ -1,6 +1,6 @@
 #' @title Asymptotic MKT method
 #' 
-#' @description MKT calculation using asymptoticMK method (Messer and Petrov 2012 PNAS; Haller and Messer 2017 G3)
+#' @description MKT calculation using asymptoticMK method (Messer and Petrov 2013 PNAS; Haller and Messer 2017 G3)
 #'
 #' @details In the standard McDonald and Kreitman test, the estimate of adaptive evolution (alpha) can be easily biased by the segregation of slightly deleterious non-synonymous substitutions. Specifically, slightly deleterious mutations contribute more to polymorphism than they do to divergence, and thus, lead to an underestimation of alpha. Messer and Petrov proposed a simple asymptotic extension of the MK test that yields accurate estimates of alpha. Briefly, this method first estimates alpha for each DAF category using its specific Pi and P0 values and then fits an exponential function to this values, of the form: alpha Fit(x) = a + b exp(-cx). Although the exponential function is generally expected to provide the best fit, a linear function is also fit to the data, of the form: alpha Fit(x) = a + bx. Finally, the asymptotic alpha estimate is obtained by extrapolating the value of this function to x = 1: alpha Asymptotic = alpha Fit (x=1). The exponential fit is always reported, except if the exponential fit fails to converge or if the linear fit is superior according to AIC. The code of this function is adapted from Haller and Messer 2017 G3 (http://github.com/MesserLab/asymptoticMK).
 #'
@@ -23,7 +23,7 @@
 #' @keywords MKT
 #' @export
 
-asymptoticMKT <- function(daf, divergence, xlow, xhigh, seed) {
+asymptoticMKT <- function(daf, divergence, xlow=0, xhigh=1, seed) {
   
   ## Check data
   check <- checkInput(daf, divergence, xlow, xhigh)
@@ -65,6 +65,10 @@ asymptoticMKT <- function(daf, divergence, xlow, xhigh, seed) {
   ## Two-step nls2() model fit at a given level of precision (res)
   fitMKmodel <- function(alpha_trimmed, f_trimmed, res) {
     
+    ## Explicit data.frame so nls2() does not rely on environment lookup
+    ## for alpha_trimmed/f_trimmed (fixes a real scoping bug).
+    df <- data.frame(alpha_trimmed=alpha_trimmed, f_trimmed=f_trimmed)
+    
     ## First fitting using starting values (st)
     mod <- tryCatch({
       
@@ -72,7 +76,7 @@ asymptoticMKT <- function(daf, divergence, xlow, xhigh, seed) {
       st <- expand.grid(const_a=seq(-1,1,length.out=res + 1), const_b=seq(-1,1,length.out=res), const_c=seq(1,10,length.out=res + 1))
       
       ## Fitting
-      nls2(alpha_trimmed ~ const_a + const_b * exp(-const_c* f_trimmed), start=st, algorithm="brute-force", control=nls.control(maxiter=NROW(st)))
+      nls2(alpha_trimmed ~ const_a + const_b * exp(-const_c* f_trimmed), data=df, start=st, algorithm="brute-force", control=nls.control(maxiter=NROW(st)))
       
     }, error=function(cond) {}) ## Return condition of error when unable to fit
     
@@ -81,7 +85,7 @@ asymptoticMKT <- function(daf, divergence, xlow, xhigh, seed) {
     
     ## Second fitting, starting from previous fit (mod)
     mod2 <- tryCatch({
-      nls2(alpha_trimmed ~ const_a + const_b * exp(-const_c* f_trimmed), start = mod, control=nls.control(maxiter=200))
+      nls2(alpha_trimmed ~ const_a + const_b * exp(-const_c* f_trimmed), data=df, start = mod, control=nls.control(maxiter=200))
       
     }, error=function(cond) {}) ## Same error handling than the previous step
     

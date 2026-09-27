@@ -4,7 +4,7 @@
 \alias{checkInput}
 \title{Check input data}
 \usage{
-checkInput(daf, divergence, xlow, xhigh)
+checkInput(daf, divergence, xlow = 0, xhigh = 1)
 }
 \arguments{
 \item{daf}{data frame containing DAF, Pi and P0 values}
@@ -15,9 +15,12 @@ checkInput(daf, divergence, xlow, xhigh)
 
 \item{xhigh}{higher limit for asymptotic alpha fit}
 }
+\value{
+List with two elements: `data` (TRUE if the input passed all checks, FALSE otherwise) and `print_errors` (character string describing the errors found, if any).
+}
 \description{
 Check input data and return detailed errors when it is malformed
 }
 \details{
-Check input data used in most package's functions (arguments daf, divergence, xlow and xhigh) and return a brief description of the error(s) found. This function is called within each analysis function (standardMKT, FWW, DGRP, asymptoticMKT, iMKT) and if data does not pass checkInput() without errors, the requested analysis is not performed.
+Check input data used in most package's functions (arguments daf, divergence, xlow and xhigh) and return a brief description of the error(s) found. This function is called within each analysis function (standardMKT, FWW, imputedMKT, eMKT, asymptoticMKT, aMKT) and if data does not pass checkInput() without errors, the requested analysis is not performed.
 }

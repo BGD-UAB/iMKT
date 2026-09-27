@@ -4,7 +4,7 @@
 \alias{FWW}
 \title{FWW correction method}
 \usage{
-FWW(daf, divergence, listCutoffs, plot = FALSE)
+FWW(daf, divergence, listCutoffs = c(0, 0.05, 0.1), plot = FALSE)
 }
 \arguments{
 \item{daf}{data frame containing DAF, Pi and P0 values}
@@ -16,7 +16,7 @@ FWW(daf, divergence, listCutoffs, plot = FALSE)
 \item{plot}{report plot (optional). Default is FALSE}
 }
 \value{
-MKT corrected by the FWW method. List with alpha results, graph (optional), divergence metrics, MKT tables and negative selection fractions
+MKT corrected by the FWW method. List with alpha results, graph (optional), divergence metrics and MKT table
 }
 \description{
 MKT calculation corrected using FWW method (Fay et al. 2001 Genetics).

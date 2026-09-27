@@ -2,3 +2,5 @@
 .RData
 .Rbuildignore
 ..gitignore.swp
+/doc/
+/Meta/

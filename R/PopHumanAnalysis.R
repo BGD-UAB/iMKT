@@ -2,14 +2,14 @@
 #'
 #' @description Perform any MKT method using a subset of PopHuman data defined by custom genes and populations lists
 #'
-#' @details Execute any MKT method (standardMKT, FWW, imputedMKT, aMKT) using a subset of PopHuman data defined by custom genes and populations lists. It uses the dataframe PopHumanData, which can be already loaded in the workspace (using loadPopHuman()) or is directly loaded when executing this function. It also allows deciding whether to analyze genes groupped by recombination bins or not, using recombination rate values corresponding to the sex average estimates from Bhérer et al. 2017 Nature Commun. 
+#' @details Execute any MKT method (standardMKT, FWW, imputedMKT, eMKT, aMKT) using a subset of PopHuman data defined by custom genes and populations lists. It uses the dataframe PopHumanData, which can be already loaded in the workspace (using loadPopHuman()) or is directly loaded when executing this function. It also allows deciding whether to analyze genes groupped by recombination bins or not, using recombination rate values corresponding to the sex average estimates from Bhérer et al. 2017 Nature Commun. 
 #'
 #' @param genes list of genes to analyze
 #' @param pops list of populations to analyze
+#' @param cutoff list of cutoffs to perform FWW, eMKT and/or imputedMKT
 #' @param recomb group genes according to recombination values (TRUE/FALSE)
-#' @param cutoffs list of cutofs to perform FWW and/or imputedMKT
 #' @param bins number of recombination bins to compute (mandatory if recomb=TRUE)
-#' @param test which test to perform. Options include: standardMKT (default), imputedMKT, FWW, aMKT
+#' @param test which test to perform. Options include: standardMKT (default), imputedMKT, eMKT, FWW, aMKT
 #' @param xlow lower limit for asymptotic alpha fit (default=0)
 #' @param xhigh higher limit for asymptotic alpha fit (default=1)
 #' @param plot report plot (optional). Default is FALSE
@@ -17,14 +17,12 @@
 #' @return List of lists with the default test output for each selected population (and recombination bin when defined)
 #'
 #' @examples
-#' ## List of genes
-#' mygenes <- c("ENSG00000011021.21_3","ENSG00000091483.6_3","ENSG00000116191.17_3",
-#'							"ENSG00000116337.15_4","ENSG00000116584.17_3","ENSG00000116745.6_3",
-#'							"ENSG00000116852.14_3","ENSG00000116898.11_3","ENSG00000117010.15_3",
-#'							"ENSG00000117090.14_3","ENSG00000117222.13_3","ENSG00000117394.20_3")
+#' ## List of genes (gene symbols, not Ensembl IDs)
+#' mygenes <- c("SCYL3","C1orf112","FGR","CFH","STPG1","NIPAL3",
+#'              "AK2","KDM1A","TTC22","ST7L","SELE","DNAJC11")
 #' ## Perform analyses
-#' PopHumanAnalysis(genes=mygenes , pops=c("CEU","YRI"), recomb=FALSE, test="standardMKT")
-#' PopHumanAnalysis(genes=mygenes , pops=c("CEU"), recomb=TRUE, bins=3, test="imputedMKT")
+#' PopHumanAnalysis(genes=mygenes, pops=c("CEU","YRI"), recomb=FALSE, test="standardMKT")
+#' PopHumanAnalysis(genes=mygenes, pops="CEU", recomb=TRUE, bins=3, test="imputedMKT")
 #' 
 #' @import utils
 #' @import stats
@@ -32,7 +30,7 @@
 #' @keywords PopData
 #' @export
 			
-PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2","..."), cutoff=0.05, recomb=TRUE/FALSE, bins=0, test=c("standardMKT","imputedMKT","FWW","aMKT"), xlow=0, xhigh=1, plot=FALSE) { 
+PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2","..."), cutoff=0.05, recomb=TRUE/FALSE, bins=0, test=c("standardMKT","imputedMKT","eMKT","FWW","aMKT"), xlow=0, xhigh=1, plot=FALSE) { 
 	
 	## Get PopHuman data
 	if (exists("PopHumanData") == TRUE) {
@@ -47,16 +45,16 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 	stop("You must specify 3 arguments at least: genes, pops, recomb (T/F).\nIf test = asymptoticMKT or test = aMKT, you must specify xlow and xhigh values.") }
 	
 	## Argument genes
-	if (length(genes) == 0 || genes == "" || !is.character(genes)) {
+	if (length(genes) == 0 || all(genes == "") || !is.character(genes)) {
 	stop("You must specify at least one gene.") }
-	if (!all(genes %in% data$globalID) == TRUE) {
-	difGenes <- setdiff(genes, data$globalID)
+	if (!all(genes %in% data$symbol) == TRUE) {
+	difGenes <- setdiff(genes, data$symbol)
 	difGenes <- paste(difGenes, collapse=", ")
-	stopMssg <- paste0("MKT data is not available for the requested gene(s).\nRemember to use gene IDs from Ensembl (ENSG...).\nThe genes that caused the error are: ", difGenes, ".")
+	stopMssg <- paste0("MKT data is not available for the requested gene(s).\nRemember to use gene symbols.\nThe genes that caused the error are: ", difGenes, ".")
 	stop(stopMssg) }
 	
 	## Argument pops
-	if (length(pops) == 0 || pops == "" || !is.character(pops)) {
+	if (length(pops) == 0 || all(pops == "") || !is.character(pops)) {
 	stop("You must specify at least one population.") }
 	if (!all(pops %in% data$pop) == TRUE) {
 	correctPops <- c("ACB","ASW","BEB","CDX","CEU","CHB","CHS","CLM","ESN","FIN","GBR","GIH","GWD","IBS","ITU","JPT","KHV","LWK","MSL","MXL","PEL","PJL","PUR","STU","TSI","YRI")
@@ -83,20 +81,20 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 	if(missing(test)) {
 	test <- "standardMKT"
 	}
-	else if (test != "standardMKT" && test != "imputedMKT" && test != "FWW" && test != "aMKT") {
-	stop("Parameter test must be one of the following: standardMKT, imputedMKT, FWW, aMKT")
+	else if (test != "standardMKT" && test != "imputedMKT" && test != "eMKT" && test != "FWW" && test != "aMKT") {
+	stop("Parameter test must be one of the following: standardMKT, imputedMKT, eMKT, FWW, aMKT")
 	}
 	if (length(test) > 1) {
-	stop("Select only one of the following tests to perform: standardMKT, imputedMKT, FWW, aMKT") }
-	if ((test == "standardMKT" || test == "imputedMKT" || test == "FWW") && (xlow != 0 || xhigh != 1)) {
+	stop("Select only one of the following tests to perform: standardMKT, imputedMKT, eMKT, FWW, aMKT") }
+	if ((test == "standardMKT" || test == "imputedMKT" || test == "eMKT" || test == "FWW") && (xlow != 0 || xhigh != 1)) {
 	warningMssgTest <- paste0("Parameters xlow and xhigh not used! (test = ",test," selected)")
 	warning(warningMssgTest) }
 	
 	## Arguments xlow, xhigh features (numeric, bounds...) checked in checkInput()
 	
 	## Perform subset
-	subsetGenes <- data[(data$globalID %in% genes & data$pop %in% pops), ]
-	subsetGenes$globalID <- as.factor(subsetGenes$globalID)
+	subsetGenes <- data[(data$symbol %in% genes & data$pop %in% pops), ]
+	subsetGenes$symbol <- as.factor(subsetGenes$symbol)
 	subsetGenes <- droplevels(subsetGenes)
 	
 	## If recomb analysis is selected
@@ -115,29 +113,13 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 		x <- x[order(x$recomb), ]
 		
 		## create bins
-		binsize <- round(nrow(x)/bins) ## Number of genes for each bin
-		count <- 1
-		x$Group <- ""
-		dat <- x[FALSE, ] ## Create df with colnames
-		
-		for (i in 0:nrow(x)) {
-		if (i%%binsize == 0) { ## Only if reminder of division = 0 (equally sized bins)
-			i1 <- i + binsize
-			if (i == 0) {
-			g1 <- x[i:binsize,]
-			group <- count
-			g1$Group <- group
-			dat[i:binsize,] <- g1
-			count <- count+1 }
-			else if (i1 <= nrow(x)) {
-			ii <- i+1
-			g1 <- x[ii:i1,]
-			group <- count
-			g1$Group <- group
-			dat[ii:i1,] <- g1
-			count <- count+1 }
-		}
-		}
+		## NOTE: replaced the previous manual binsize/modulo loop, which
+		## silently dropped an entire bin's worth of genes whenever
+		## nrow(x) was not exactly divisible by 'bins' (same confirmed
+		## bug as in PopFlyAnalysis.R). cut() assigns every gene to
+		## exactly one of 'bins' groups, with no gene left out.
+		x$Group <- cut(seq_len(nrow(x)), breaks = bins, labels = FALSE)
+		dat <- x
 		dat$Group <- as.factor(dat$Group)
 		
 		## Iterate through each recomb bin
@@ -164,8 +146,8 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 		
 		## Group genes
 		x1 <- droplevels(x1)
-		for (l in levels(x1$globalID)) {
-			x2 <- x1[x1$globalID == l, ]
+		for (l in levels(x1$symbol)) {
+			x2 <- x1[x1$symbol == l, ]
 			
 			## DAF
 			x2$DAF0f <- as.character(x2$DAF0f); x2$DAF4f <- as.character(x2$DAF4f)
@@ -205,6 +187,12 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 			output <- c(output, recStats) }
 		else if(test == "imputedMKT" && plot == TRUE) {
 			output <- imputedMKT(daf, div, listCutoffs=cutoff ,plot=TRUE) 
+			output <- c(output, recStats) }
+		else if(test == "eMKT" && plot == FALSE) {
+			output <- eMKT(daf, div, listCutoffs=cutoff)
+			output <- c(output, recStats) }
+		else if(test == "eMKT" && plot == TRUE) {
+			output <- eMKT(daf, div, listCutoffs=cutoff, plot=TRUE)
 			output <- c(output, recStats) }
 		else if(test == "FWW" && plot == FALSE) {
 			output <- FWW(daf, div, listCutoffs=cutoff)					 
@@ -258,8 +246,8 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 		Di <- 0; D0 <- 0
 		
 		## Group genes
-		for (j in levels(x$globalID)) {
-		x1 <- x[x$globalID == j, ]
+		for (j in levels(x$symbol)) {
+		x1 <- x[x$symbol == j, ]
 		
 		## DAF
 		x1$DAF0f <- as.character(x1$DAF0f); x1$DAF4f <- as.character(x1$DAF4f)
@@ -297,6 +285,10 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 		output <- imputedMKT(daf, div,listCutoffs=cutoff) }
 		else if(test == "imputedMKT" && plot == TRUE) {
 		output <- imputedMKT(daf, div,listCutoffs=cutoff, plot=TRUE) }
+		else if(test == "eMKT" && plot == FALSE) {
+		output <- eMKT(daf, div, listCutoffs=cutoff) }
+		else if(test == "eMKT" && plot == TRUE) {
+		output <- eMKT(daf, div, listCutoffs=cutoff, plot=TRUE) }
 		else if(test == "FWW" && plot == FALSE) {
 		output <- FWW(daf, div, listCutoffs=cutoff) }
 		else if(test == "FWW" && plot == TRUE) {
