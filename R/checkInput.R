@@ -136,24 +136,24 @@ checkInput <- function(daf, divergence, xlow=0, xhigh=1){
         mainErrors <- append(mainErrors,error) }
 
     ## Check if divergence variables are not out of bounds
-    if (mi <= 0){
-        dataIsGood <- FALSE
-        error <- "mi must be greater than zero."
-        mainErrors <- append(mainErrors,error) }
-    if (m0 <= 0){
-        dataIsGood <- FALSE
-        error <- "m0 must be greater than zero."
-        mainErrors <- append(mainErrors,error) }
-    if (D0 < 0){
-        dataIsGood <- FALSE
-        error <- "D0 must be greater or equal than zero."
-        mainErrors <- append(mainErrors,error) }
+    if (any(mi <= 0)){
+      dataIsGood <- FALSE
+      error <- "mi must be greater than zero."
+      mainErrors <- append(mainErrors,error) }
+    if (any(m0 <= 0)){
+      dataIsGood <- FALSE
+      error <- "m0 must be greater than zero."
+      mainErrors <- append(mainErrors,error) }
+    if (any(D0 < 0)){
+      dataIsGood <- FALSE
+      error <- "D0 must be greater or equal than zero."
+      mainErrors <- append(mainErrors,error) }
     if (D0 == 0) {
-        warning("D0 == 0.") }
-    if (Di <= 0){
-        dataIsGood <- FALSE
-        error <- "Di must be greater than zero."
-        mainErrors <- append(mainErrors,error) }
+      warning("D0 == 0.") }
+    if (any(Di <= 0)){
+      dataIsGood <- FALSE
+      error <- "Di must be greater than zero."
+      mainErrors <- append(mainErrors,error) }
 
     ## Check if number of sites (m, m0) is not higher than divergenge (d, D0) + polimorphisms (p|p0)
     if (Di > mi || sum(Pi) > mi || sum(Pi) + Di > mi){
