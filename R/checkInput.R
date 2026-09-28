@@ -110,22 +110,22 @@ checkInput <- function(daf, divergence, xlow=0, xhigh=1){
     D0 <- divergence$D0 ## Synonymous divergence
 
     ## Check NAs and numeric for divergence
-    if (is.na(mi) || !is.numeric(mi)){
-        dataIsGood <- FALSE
-        error <- "Malformed mi (must be numeric)."
-        mainErrors <- append(mainErrors,error) }
-    if (is.na(m0) || !is.numeric(m0)){
-        dataIsGood <- FALSE
-        error <- "Malformed m0 (must be numeric)."
-        mainErrors <- append(mainErrors,error) }
-    if (is.na(D0) || !is.numeric(D0)){
-        dataIsGood <- FALSE
-        error <- "Malformed D0 (must be numeric)."
-        mainErrors <- append(mainErrors,error) }
-    if (is.na(Di) || !is.numeric(Di)){
-        dataIsGood <- FALSE
-        error <- "Malformed Di (must be numeric)."
-        mainErrors <- append(mainErrors,error) }
+    if (any(is.na(mi)) || !is.numeric(mi)){
+      dataIsGood <- FALSE
+      error <- "Malformed mi (must be numeric)."
+      mainErrors <- append(mainErrors,error) }
+    if (any(is.na(m0)) || !is.numeric(m0)){
+      dataIsGood <- FALSE
+      error <- "Malformed m0 (must be numeric)."
+      mainErrors <- append(mainErrors,error) }
+    if (any(is.na(D0)) || !is.numeric(D0)){
+      dataIsGood <- FALSE
+      error <- "Malformed D0 (must be numeric)."
+      mainErrors <- append(mainErrors,error) }
+    if (any(is.na(Di)) || !is.numeric(Di)){
+      dataIsGood <- FALSE
+      error <- "Malformed Di (must be numeric)."
+      mainErrors <- append(mainErrors,error) }
     if (is.na(xlow) || is.null(xlow)){
         dataIsGood <- FALSE
         error <- "Malformed xlow (must be numeric)."
