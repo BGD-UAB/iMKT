@@ -91,19 +91,19 @@ eMKT <- function (daf, divergence, listCutoffs=c(0, 0.05, 0.1), plot = FALSE)
                                                      alpha, ")"))))
     i = which.max(output$alphaCorrected$alphaCorrected)
     fractionsMelt = output[["fractions"]][i, 2:4]
-    fractionsMelt = reshape2::melt(fractionsMelt, id.vars = NULL)
-    fractionsMelt[["test"]] = rep(c("eMKT"), 3)
-    plotFraction = ggplot(fractionsMelt) + geom_bar(stat = "identity",
-                                                     aes(x = test, y = value, fill = variable),
-                                                     color = "black") + coord_flip() + themePublication() +
-      ylab(label = "Fraction") + xlab(label = "Cut-off") +
-      scale_fill_manual(values = c("#386cb0", "#fdb462",
-                                    "#7fc97f", "#ef3b2c", "#662506", "#a6cee3", "#fb9a99",
-                                    "#984ea3", "#ffff33"), breaks = c("f", "d", "b"),
-                         labels = c(expression(italic("f")), expression(italic("d")),
-                                    expression(italic("b")))) + theme(axis.line = element_blank()) +
-      scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25), expand = c(0,
-                                                            0))
+    fractionsMelt = reshape2::melt(output[["fractions"]], id.vars = "cutoff")
+    fractionsMelt$cutoff = as.factor(fractionsMelt$cutoff)
+    
+    plotFraction = ggplot(fractionsMelt) + geom_bar(stat = "identity", 
+                                                    aes(x = cutoff, y = value, fill = variable), color = "black") + 
+      coord_flip() + themePublication() + ylab(label = "Fraction") + 
+      xlab(label = "Cut-off") + scale_fill_manual(values = c("#386cb0", 
+                                                             "#fdb462", "#7fc97f", "#ef3b2c", "#662506", "#a6cee3", 
+                                                             "#fb9a99", "#984ea3", "#ffff33"), breaks = c("f", 
+                                                                                                          "d", "b"), labels = c(expression(italic("f")), expression(italic("d")), 
+                                                                                                                                expression(italic("b")))) + theme(axis.line = element_blank()) + 
+      scale_y_continuous(limits = c(0, 1), breaks = seq(0, 
+                                                        1, 0.25), expand = c(0, 0))
     plotEmkt = plot_grid(plotAlpha, plotFraction, nrow = 2,
                           labels = c("A", "B"), rel_heights = c(2, 1))
     output[["graph"]] = plotEmkt
