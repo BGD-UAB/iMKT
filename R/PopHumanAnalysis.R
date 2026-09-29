@@ -150,10 +150,10 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 			x2 <- x1[x1$symbol == l, ]
 			
 			## DAF
+			## DAF
 			x2$DAF0f <- as.character(x2$DAF0f); x2$DAF4f <- as.character(x2$DAF4f)
-			daf0f <- unlist(strsplit(x2$DAF0f, split=";"))
-			daf4f <- unlist(strsplit(x2$DAF4f, split=";"))
-			daf0f <- as.numeric(daf0f); daf4f <- as.numeric(daf4f)
+			daf0f <- Reduce(`+`, lapply(x2$DAF0f, function(z) as.numeric(unlist(strsplit(z, split=";")))))
+			daf4f <- Reduce(`+`, lapply(x2$DAF4f, function(z) as.numeric(unlist(strsplit(z, split=";")))))
 			Pi <- Pi + daf0f; P0 <- P0 + daf4f
 			
 			## Divergence
@@ -251,9 +251,8 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 		
 		## DAF
 		x1$DAF0f <- as.character(x1$DAF0f); x1$DAF4f <- as.character(x1$DAF4f)
-		daf0f <- unlist(strsplit(x1$DAF0f, split=";"))
-		daf4f <- unlist(strsplit(x1$DAF4f, split=";"))
-		daf0f <- as.numeric(daf0f); daf4f <- as.numeric(daf4f)
+		daf0f <- Reduce(`+`, lapply(x1$DAF0f, function(z) as.numeric(unlist(strsplit(z, split=";")))))
+		daf4f <- Reduce(`+`, lapply(x1$DAF4f, function(z) as.numeric(unlist(strsplit(z, split=";")))))
 		Pi <- Pi + daf0f; P0 <- P0 + daf4f
 		
 		## Divergence
