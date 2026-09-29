@@ -157,8 +157,8 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 			Pi <- Pi + daf0f; P0 <- P0 + daf4f
 			
 			## Divergence
-			mi <- mi + x2$mi; m0 <- m0 + x2$m0
-			Di <- Di + x2$di; D0 <- D0 + x2$d0
+			mi <- mi + sum(x2$mi); m0 <- m0 + sum(x2$m0)
+			Di <- Di + sum(x2$di); D0 <- D0 + sum(x2$d0)
 		}
 		
 		## Proper formats
@@ -257,8 +257,8 @@ PopHumanAnalysis <- function(genes=c("gene1","gene2","..."), pops=c("pop1","pop2
 		Pi <- Pi + daf0f; P0 <- P0 + daf4f
 		
 		## Divergence
-		mi <- mi + x1$mi; m0 <- m0 + x1$m0
-		Di <- Di + x1$di; D0 <- D0 + x1$d0
+		mi <- mi + sum(x1$mi); m0 <- m0 + sum(x1$m0)
+		Di <- Di + sum(x1$di); D0 <- D0 + sum(x1$d0)
 		}
 		
 		## Proper formats
